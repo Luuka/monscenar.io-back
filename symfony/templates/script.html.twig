@@ -1,0 +1,120 @@
+<style>
+    * {
+        font-size: 12pt;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .underline {
+        text-decoration: underline;
+    }
+
+    .italic {
+        font-style: italic;
+    }
+
+    .centered {
+        text-align: center;
+    }
+
+    .title span {
+        font-size: 25pt;
+    }
+
+    .spacer {
+        height: 200px;
+    }
+</style>
+<page>
+    <div class="spacer"></div>
+    <table style="width: 90%;margin:auto;">
+    {% for token in tokens %}
+        {% if token.type in ['title', 'credit', 'authors', 'author','source','notes','draft_date','date','contact','copyright'] %}
+
+            {% set class = '' %}
+
+            {% if token.type == 'title' %}
+                {% set class = 'title' %}
+            {% endif %}
+
+            <tr>
+                <td style="text-align: center; padding-top: 30px;" class="{{ class }}">
+                    {% if token.text is defined %}
+                        {{ token.text | raw }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+    </table>
+</page>
+
+<page>
+    {% set isDual = false %}
+
+    {% for token in tokens %}
+
+        {% if token.type in ['title', 'credit', 'authors', 'author','source','notes','draft_date','date','contact','copyright'] %}
+
+        {% elseif token.type == 'dual_dialogue_begin' %}
+            {% set isDual = true %}
+            <table style="text-align: left;width: 80%; margin: auto">
+            <tr>
+        {% elseif token.type == 'dialogue_begin' and isDual == true %}
+            <td style="width: 50%;">
+        {% elseif token.type == 'dialogue_end' and isDual == true %}
+            </td>
+        {% elseif token.type == 'dialogue_begin' and isDual != true %}
+            <div style="width: 100%;break-inside: avoid;">
+        {% elseif token.type == 'dialogue_end' and isDual != true %}
+            </div>
+        {% elseif (token.type == 'dialogue' or token.type == 'character') and isDual == true %}
+            <div style="text-align: center">
+                {% if token.text is defined %}
+                    {% if token.type == 'character' %}
+                        <strong>{{ token.text | raw }}</strong>
+                    {% else %}
+                        {{ token.text | raw }}
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% elseif token.type == 'dual_dialogue_end'%}
+            {% set isDual = false %}
+            </tr>
+            </table>
+        {% else %}
+
+            {% set style = '' %}
+            {% if token.type == 'transition' %}
+                {% set pageBreak = true %}
+                {% set style = style ~ 'text-align:right;font-weight:bold;padding-top:20px;' %}
+            {% elseif token.type == 'scene_heading' %}
+                {% set style = style ~ 'text-align:left;font-weight:bold;padding-top:20px;' %}
+            {% elseif token.type == 'character' %}
+                {% set style = style ~ 'text-align:center;font-weight: bold;padding-top:10px;' %}
+            {% elseif token.type == 'dialogue' %}
+                {% set style = style ~ 'text-align:center;' %}
+            {% elseif token.type == 'parenthetical' %}
+                {% set style = style ~ 'text-align:center;' %}
+            {% elseif token.type == 'centered' %}
+                {% set style = style ~ 'text-align:center;' %}
+            {% else %}
+                {% set style = style ~ 'text-align:left;' %}
+            {% endif %}
+
+            <table style="width: 80%; margin: auto;">
+                <tr>
+                    <td style="width: 100%; {{ style }}">
+                        {% if token.text is defined %}
+                            {{ token.text | replace({"\n": "", "\r": "", "\t": ""}) | raw }}
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        {% endif %}
+
+    {% endfor %}
+
+</page>
