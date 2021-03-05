@@ -30,6 +30,8 @@ security:
 
     access_control:
          - { path: ^/api/v1/healthcheck, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api/v1/forgot-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api/v1/reset-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api/v1/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api/v1/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api/v1/debug, roles: IS_AUTHENTICATED_ANONYMOUSLY }

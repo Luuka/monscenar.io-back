@@ -22,7 +22,7 @@ class User implements UserInterface
 {
     const ROLE_USER = 'ROLE_USER';
 
-    const IGNORED_ATTRIBUTES = ['password', 'plainPassword', 'roles', 'apiToken', 'salt', 'projects'];
+    const IGNORED_ATTRIBUTES = ['password', 'plainPassword', 'roles', 'apiToken', 'salt', 'projects', 'resetToken'];
 
     /**
      * @ORM\Id
@@ -67,6 +67,11 @@ class User implements UserInterface
     * @ORM\Column(type="string", unique=true, nullable=true)
     */
     private $apiToken;
+
+    /**
+     * @ORM\Column(type="string", unique=true, nullable=true)
+     */
+    private $resetToken;
 
     /**
      * @ORM\OneToMany(targetEntity=Project::class, mappedBy="owner")
@@ -213,5 +218,21 @@ class User implements UserInterface
      */
     public function addProject(Project $project) {
         $this->projects[] = $project;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResetToken()
+    {
+        return $this->resetToken;
+    }
+
+    /**
+     * @param mixed $resetToken
+     */
+    public function setResetToken($resetToken): void
+    {
+        $this->resetToken = $resetToken;
     }
 }
